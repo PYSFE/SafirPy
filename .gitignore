@@ -1,0 +1,34 @@
+# Compiled python modules.
+*.pyc
+
+# Setuptools distribution folder and automatically generated files
+/dist/
+/MANIFEST
+
+# Python egg metadata, regenerated from source files by setuptools.
+/*.egg-info
+
+# Python virtual environment
+/venv
+*.env
+
+# Pycharm IDE files
+*.idea
+
+# Visual Studio Code IDE files
+/.vscode
+
+# Local folders
+/benchmarks
+/ref
+
+# Python unittest files
+/.pytest_cache
+
+# Python package distribution files
+/build
+
+# Other documents
+*.docx
+*.exe
+*.pdf

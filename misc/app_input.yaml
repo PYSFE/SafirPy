@@ -1,0 +1,88 @@
+
+# ========
+# Settings
+# ========
+
+setting_parameters:
+
+  # number of threads. 1 will not call multiprocessing.
+  n_proc: 6
+
+  # number of Monte Carlo simulations
+  n_simulations: 20
+
+  # IMPORTANT make sure you have this folder available and make its path length short (to avoid SAFIR path limit error)
+  path_work_root_dir: C:\safirpy_test
+
+  # safir.exe path
+  path_safir_exe: C:\safirpy\ref\SAFIR2016c0_proba.exe
+  path_safir_files:
+    0.tem: C:\safirpy\misc\0.tem
+    0.in: C:\safirpy\misc\0.in
+
+  # target convergence, seeking process will terminate when time convergence is within the target range (inclusive).
+  seek_time_convergence_target: 1800
+  seek_time_convergence_target_tol: null  # null or any positive numbers
+
+  # initial load bound for seeking target convergence
+  seek_load_lbound: 1000000.0  # lower bound
+  seek_load_ubound: 25000000.0  # upper bound
+  seek_load_sign: -1  # sign of the initial load bounds
+
+  seek_delta_load_target: 1000.0
+
+# ======================
+# Safir files parameters
+# ======================
+# Fell free to change any static parameter to distributed parameter.
+
+safir_parameters:
+
+  0.in:
+
+    stec3proba_elastic_modulus: 200000000000.0
+
+    stec3proba_poisson_ratio: 0.3
+
+    # example of distributed parameter
+    stec3proba_k_y_uncertainty:
+      dist_name: norm
+      ubound: 0.999
+      lbound: -0.999
+      loc: 0
+      scale: 2
+
+    # example of distributed parameter
+    stec3proba_yield_strength:
+      dist_name: norm  # full list of available distributions see notes at the end
+      ubound: 100000000.0
+      lbound: 600000000.0
+      loc: 350000000.0
+      scale: 1000000000000.0
+      kwargs: {}
+
+    silcon_etc_poisson_ratio: 0.2
+
+    silcon_etc_compressive_strength: 50000000.0
+
+    time_time_step: 10
+
+    timeprint_time_step: 10
+
+  0.tem:
+
+    loc_x: -0.001477222
+
+    loc_y: 0.0
+
+# Available distributions (non exhaustive):
+# expon	        An exponential continuous random variable.
+# exponweib	    An exponentiated Weibull continuous random variable.
+# gumbel_r	    A right-skewed Gumbel continuous random variable.
+# gumbel_l	    A left-skewed Gumbel continuous random variable.
+# lognorm	    A lognormal continuous random variable.
+# norm	        A normal continuous random variable.
+# uniform	    A uniform continuous random variable.
+# weibull_min	Weibull minimum continuous random variable.
+# weibull_max	Weibull maximum continuous random variable.
+# FULL LIST     See 'Continuous distributions' section in https://docs.scipy.org/doc/scipy/reference/stats.html
