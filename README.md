@@ -52,6 +52,10 @@ In Python command line, enter the following code will run Monte Carlo simulation
 
 ## Authors
 
-* License
+* **Yan Fu** - *ian.fu@ofrconsultants.com*
+* **Danny Hopkin** - *danny.hopkin@ofrconsultants.com*
+* **Ruben V. Coile** - *ruben.vancoile@ugent.be*
+
+## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details
