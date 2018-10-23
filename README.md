@@ -1,4 +1,4 @@
-# SFESafirPy
+# SafirPy
 
 Introduction is on the way.
 
@@ -10,7 +10,7 @@ These instructions will get you a copy of the project up and running on your loc
 
 [Safir 2016](https://www.uee.uliege.be/cms/c_2383458/en/safir);
 
-[Python 2.6](https://www.anaconda.com/download/) or later; and
+[Python 3.6](https://www.anaconda.com/download/) or later; and
 
 The following Python libraries:
 
@@ -44,14 +44,17 @@ SafirPy uses Python, and as of Oct 2018 SafirPy only works in Python3.
 
 ### Usage
 
-In Python command line, enter the following code will run Monte Carlo simulation using Safir and ask for input file directory. Input file is in yaml format, an example input file is provided `/misc/app_input.yaml`.
-```python
->>> from safirpy import safir_mc_app as app
->>> app.run()
+Type the following command in a command line to start the Monte Carlo tool, an dialog will pop up for selecting input file. An input file template is provided in `/misc/app_input.yaml`.
+```sh
+python -m safirpy.mc
 ```
 
 ## Authors
 
-* License
+* **Yan Fu** - *ian.fu@ofrconsultants.com*
+* **Danny Hopkin** - *danny.hopkin@ofrconsultants.com*
+* **Ruben V. Coile** - *ruben.vancoile@ugent.be*
+
+## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details

@@ -32,3 +32,6 @@
 *.docx
 *.exe
 *.pdf
+gui.py
+view.qml
+*.qmlc

@@ -283,7 +283,7 @@ def safir_mp_host(
         calc_worker,
         n_proc=1,
         mp_maxtasksperchild=1000,
-        progress_print_sleep=1
+        progress_print_sleep=2
 ):
     time_simulation_start = time.perf_counter()
     m = multiprocessing.Manager()
@@ -291,15 +291,15 @@ def safir_mp_host(
     p = multiprocessing.Pool(n_proc, maxtasksperchild=mp_maxtasksperchild)
     jobs = p.map_async(calc_worker, [(kwargs, multiprocessing_queue) for kwargs in list_kwargs])
     count_total_simulations = len(list_kwargs)
-    n_steps = 24  # length of the progress bar
+    n_steps = 72  # length of the progress bar
     while progress_print_sleep:
         if jobs.ready():
             time_simulation_consumed = time.perf_counter() - time_simulation_start
-            print("{}{} {:.1f}s".format('█' * round(n_steps), '-' * round(0), time_simulation_consumed))
+            print("|{}={}|{:05.1f}s".format('=' * round(n_steps), '-' * round(0), time_simulation_consumed))
             break
         else:
             p_ = multiprocessing_queue.qsize() / count_total_simulations * n_steps
-            print("{}{} {:03.1f}%".format('█' * int(round(p_)), '-' * int(n_steps - round(p_)), p_ / n_steps * 100),
+            print("|{}>{}|{:03.1f}%".format('=' * int(round(p_)), '-' * int(n_steps - round(p_)), p_ / n_steps * 100),
                   end='\r')
             time.sleep(progress_print_sleep)
     p.close()
