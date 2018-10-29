@@ -6,19 +6,21 @@
 setting_parameters:
 
   # number of threads. 1 will not call multiprocessing.
-  n_proc: 6
+  n_proc: 7
 
   # number of Monte Carlo simulations
-  n_simulations: 20
+  n_simulations: 7
 
   # IMPORTANT make sure you have this folder available and make its path length short (to avoid SAFIR path limit error)
   path_work_root_dir: C:\safirpy_test
 
-  # safir.exe path
-  path_safir_exe: C:\safirpy\ref\SAFIR2016c0_proba.exe
+  # safir.exe path. Can be relative path (i.e. safir.exe in this folder) or full path
+  path_safir_exe: SAFIR2016c0_proba.exe
+
+  # SAFIR template files to be used for the simulation. Can be relative or full path.
   path_safir_files:
-    0.tem: C:\safirpy\misc\0.tem
-    0.in: C:\safirpy\misc\0.in
+    0.tem: 0.tem
+    0.in: 0.in
 
   # target convergence, seeking process will terminate when time convergence is within the target range (inclusive).
   seek_time_convergence_target: 1800
@@ -29,7 +31,7 @@ setting_parameters:
   seek_load_ubound: 25000000.0  # upper bound
   seek_load_sign: -1  # sign of the initial load bounds
 
-  seek_delta_load_target: 1000.0
+  seek_delta_load_target: 10000.0
 
 # ======================
 # Safir files parameters

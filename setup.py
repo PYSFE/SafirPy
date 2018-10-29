@@ -5,9 +5,9 @@ import setuptools
 setuptools.setup(
     name='SafirPy',
 
-    version='0.0.1',
+    version='0.0.2',
 
-    description='SAFIR wrapper for Monte Carlo simulation',
+    description='A Python wrapper for Safir',
 
     author='Yan Fu',
 
@@ -32,7 +32,7 @@ setuptools.setup(
 
     long_description='Structural fire safety engineering - probabilistic reliability assessment',
 
-    packages=['safirpy'],
+    packages=['safirpy', 'safirpy.mc'],
 
     install_requires=[
         'numpy>=1.15.2',

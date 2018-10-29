@@ -2,38 +2,58 @@
 
 ### KNOWN ISSUES AND TASKS LIST
 
- - [ ] Validation to the app.
+- [ ] Validation.
  
- - [ ] Finalise README.md.
+- [ ] Finalise README.md.
 
-- SAFIR generates comeback file will trigger anti-virus software scan, potentially reduces CPU capacity
+- [ ] SAFIR generates comeback file and triggers anti-virus software scan, potentially reduces CPU capacity. it is recommended to disable anti-virus software during simulation.
+
+- [ ] General purpose bisection minimiser, i.e. able to define what parameter to change other than applied loading.
+
+- [ ] Restructure the convergence function to a minimisation function.
+
 
 ### VERSIONS
 
+**22/10/2018 VERSION: 0.0.2**
+
+- New features:
+
+    - Monte Carlo tool can be executed by `python -m safirpy.mc` in a terminal or command line console
+    
+    - Simulation completion ETA is added.
+    
+    - All tested loads and time convergence values for individual Monte Carlo entry is recorded and saved as `pyout_seek_trail.txt`.
+
+- Fixes:
+
+    - Final applied load is optimised to take the load with time convergence closest to the defined target. Previously the final applied load was taken as the last calculated load and this is not always numerically correct and the second to last load can be more closer to the time convergence target.
+
+
 **22/10/2018 VERSION: 0.0.1**
 
-This is a pre-alpha release.
+This initial release is pre-alpha stage and consists essential components to run Monte Carlo simulation using SAFIR.
 
-- [x] Pre-process:
+- Pre-process:
 
-    - [x] Function to create random variables (for Monte Carlo simulation) subject to SAFIR problem definition
+    - Function to create random variables (for Monte Carlo simulation) subject to SAFIR problem definition
 
-    - [x] Function to read and parameterise SAFIR problem definition file so a specific variable of the input file can be modified (e.g. MC random variables)
+    - Function to read and parameterise SAFIR problem definition file so a specific variable of the input file can be modified (e.g. MC random variables)
 
-    - [x] Function to create a list of path strings with defined directory structure. This will be used to store SAFIR problem definition files for Monte Carlo simulation.
+    - Function to create a list of path strings with defined directory structure. This will be used to store SAFIR problem definition files for Monte Carlo simulation.
 
-    - [x] Function to write files (i.e. SAFIR problem definition file) into the previously created folders.
+    - Function to write files (i.e. SAFIR problem definition file) into the previously created folders.
 
-- [x] SAFIR-process:
+- SAFIR-process:
 
-    - [x] Function to handle SAFIR
+    - Function to handle SAFIR
     
-    - [x] Function to seek time of convergence by modifying load
+    - Function to seek time of convergence by modifying load
     
-    - [x] Function to call the seeking routine with multiprocessing
+    - Function to call the seeking routine with multiprocessing
     
-- [x] Post-process:
+- Post-process:
   
-    - [x] Save sought loading (to a specified time convergence) to a .csv file.
+    - Save sought loading (to a specified time convergence) to a .csv file.
     
-- [x] Host routine, i.e. application routine to combine all functions
+- Host routine, i.e. application routine to combine all functions
