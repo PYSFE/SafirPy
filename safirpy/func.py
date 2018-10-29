@@ -278,7 +278,7 @@ def preprocess_safir_mc_parameters(n_rv, dict_distribution_params):
     return dict_sampled_random_values
 
 
-def safir_mp_host(
+def safir_mc_mp(
         list_kwargs,
         calc_worker,
         n_proc=1,
@@ -287,20 +287,27 @@ def safir_mp_host(
 ):
     time_simulation_start = time.perf_counter()
     m = multiprocessing.Manager()
-    multiprocessing_queue = m.Queue()
+    mp_q = m.Queue()
     p = multiprocessing.Pool(n_proc, maxtasksperchild=mp_maxtasksperchild)
-    jobs = p.map_async(calc_worker, [(kwargs, multiprocessing_queue) for kwargs in list_kwargs])
-    count_total_simulations = len(list_kwargs)
-    n_steps = 72  # length of the progress bar
+    jobs = p.map_async(calc_worker, [(kwargs, mp_q) for kwargs in list_kwargs])
+    n_simulations = len(list_kwargs)
+    n_steps = 60  # length of the progress bar
+    str_fmt = "|{}>{}|{:03.1f}% ETA: {:02.0f}:{:02.0f}:{:02.0f}:{:02.0f}"
     while progress_print_sleep:
+        time_consumed = time.perf_counter() - time_simulation_start
+        if mp_q.qsize():
+            eta_left = 99, 24, 60, 60
+        else:
+            eta_left = (time_consumed / (mp_q.qsize() + 1)) * (n_simulations - mp_q.qsize())
+            eta_left = eta_left//86400, eta_left//360060, eta_left//60, eta_left%60
+
         if jobs.ready():
-            time_simulation_consumed = time.perf_counter() - time_simulation_start
-            print("|{}={}|{:05.1f}s".format('=' * round(n_steps), '-' * round(0), time_simulation_consumed))
+            print(str_fmt.format('=' * round(n_steps), '-' * 0, 100, *eta_left))
             break
         else:
-            p_ = multiprocessing_queue.qsize() / count_total_simulations * n_steps
-            print("|{}>{}|{:03.1f}%".format('=' * int(round(p_)), '-' * int(n_steps - round(p_)), p_ / n_steps * 100),
-                  end='\r')
+            p_ = mp_q.qsize() / n_simulations * n_steps
+
+            print(str_fmt.format('=' * int(p_), '-' * int(n_steps - p_), p_/n_steps * 100, *eta_left), end='\r')
             time.sleep(progress_print_sleep)
     p.close()
     p.join()
@@ -374,7 +381,6 @@ def safir_seek_convergence_worker(arg):
 def safir_seek_convergence(
         path_work_directory,
         path_safir_exe,
-        # str_problem_definition_parameterised,
         dict_safir_in_files_strings,
         dict_safir_in_files_params,
         seek_time_convergence_target,
@@ -418,7 +424,8 @@ def safir_seek_convergence(
         return -1
 
     # data containers
-    list_load = [numpy.nan, numpy.nan]
+    list_load = [numpy.nan, numpy.nan, numpy.nan]
+    list_time = []
 
     # ===============
     # Seeking process
@@ -437,6 +444,8 @@ def safir_seek_convergence(
         # -------------------
         # Prepare SAFIR files
         # -------------------
+
+        path_target_problem_definition = None
 
         # work out new load and convert to string, getting ready to write into the *.in file
         for key, text in dict_safir_in_files_strings.items():
@@ -471,7 +480,7 @@ def safir_seek_convergence(
             if seek_time_convergence_target_range[0] <= time_convergence <= seek_time_convergence_target_range[1]:
                 seek_status_converge_on_time = True
                 break
-        elif abs(list_load[-2] - list_load[-1]) < seek_delta_load_target:
+        elif abs(list_load[-3] - list_load[-2]) < seek_delta_load_target:
             seek_status_converge_on_delta_load = True
             break
         elif n_iteration >= seek_iteration_max:
@@ -482,13 +491,27 @@ def safir_seek_convergence(
 
         time_convergence = safir_check_convergence_time(path_target_problem_definition)
 
+        list_time.append(time_convergence)
         # print('{:25}: {:23.0f}'.format('convergence time', time_convergence))
         # print('{:25}: {:23.0f} ({:5.0f})'.format('applied load', list_load[-1], abs(list_load[-1]-list_load[-2])))
         # print()
 
         n_iteration += 1
 
-    return list_load[-1]
+    list_load = numpy.array(list_load[3:-1])
+    list_time = numpy.array(list_time)
+    load_opt = list_load[numpy.argmin(numpy.abs(list_time - seek_time_convergence_target))]
+
+    with open(os.path.join(path_work_directory, 'pyout_seek_trail.txt'), 'w+') as f:
+        str_out = '\n'.join([','.join(k) for k in zip(list_load.astype(str), list_time.astype(str))])
+        f.write(str_out)
+
+    return load_opt
+
+
+def safir_minimise_func(x, y):
+    pass
+
 
 
 def safir_check_convergence_time(path_work_directory):
@@ -609,7 +632,7 @@ def safir_mc_host(
         for i in range(n_rv):
             results.append(safir_seek_convergence(**list_mc_param[i]))
     else:
-        results = safir_mp_host(
+        results = safir_mc_mp(
             list_kwargs=list_mc_param,
             calc_worker=safir_seek_convergence_worker,
             n_proc=n_proc,
@@ -626,7 +649,7 @@ def safir_mc_host(
     pd_all_param.to_csv(os.path.join(path_work_root_dir, 'safir_mc_params.csv'))
 
 
-def util_generate_input_yaml(yaml_app_param):
+def aux_generate_input_yaml(yaml_app_param):
 
     path_project_root_dir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 

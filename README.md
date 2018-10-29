@@ -1,10 +1,8 @@
 # SafirPy
 
-Introduction is on the way.
+SafirPy is a Python wrapper to the finite element solver Safir, aimed to provide extended features. Currently, it is able to run Monte Carlo simulations.
 
 ## Getting Started
-
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
 
 ### Prerequisites
 
@@ -25,6 +23,7 @@ seaborn==0.9.0
 ### Installation
 
 #### pip
+
 pip is a package management system for installing and updating Python packages. pip comes with Python, so you get pip simply by installing Python. On Ubuntu and Fedora Linux, you can simply use your system package manager to install the `python3-pip` package. [The Hitchhiker's Guide to Python ](https://docs.python-guide.org/starting/installation/) provides some guidance on how to install Python on your system if it isn't already; you can also install Python directly from [python.org](https://www.python.org/getit/). You might want to [upgrade pip](https://pip.pypa.io/en/stable/installing/) before using it to install other programs.
 
 SafirPy uses Python, and as of Oct 2018 SafirPy only works in Python3. 
@@ -44,7 +43,8 @@ SafirPy uses Python, and as of Oct 2018 SafirPy only works in Python3.
 
 ### Usage
 
-Type the following command in a command line to start the Monte Carlo tool, an dialog will pop up for selecting input file. An input file template is provided in `/misc/app_input.yaml`.
+To run the Monte Carlo toolbox use the following commands.
+
 ```sh
 python -m safirpy.mc
 ```
@@ -57,4 +57,4 @@ python -m safirpy.mc
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.

@@ -2,21 +2,37 @@
 
 ### KNOWN ISSUES AND TASKS LIST
 
- - [ ] Validation to the app.
+- [ ] Validation.
  
- - [ ] Finalise README.md.
+- [ ] Finalise README.md.
 
-- SAFIR generates comeback file will trigger anti-virus software scan, potentially reduces CPU capacity
+- [ ] SAFIR generates comeback file and triggers anti-virus software scan, potentially reduces CPU capacity. it is recommended to disable anti-virus software during simulation.
+
+- [ ] General purpose bisection minimiser, i.e. able to define what parameter to change other than applied loading.
+
+- [ ] Restructure the convergence function to a minimisation function.
+
 
 ### VERSIONS
 
 **22/10/2018 VERSION: 0.0.2**
 
-- Added feature to enable executing the Monte Carlo simulation from `python -m safirpy.mc` in a terminal or command line console.
+- New features:
+
+    - Monte Carlo tool can be executed by `python -m safirpy.mc` in a terminal or command line console
+    
+    - Simulation completion ETA is added.
+    
+    - All tested loads and time convergence values for individual Monte Carlo entry is recorded and saved as `pyout_seek_trail.txt`.
+
+- Fixes:
+
+    - Final applied load is optimised to take the load with time convergence closest to the defined target. Previously the final applied load was taken as the last calculated load and this is not always numerically correct and the second to last load can be more closer to the time convergence target.
+
 
 **22/10/2018 VERSION: 0.0.1**
 
-This is a pre-alpha release.
+This initial release is pre-alpha stage and consists essential components to run Monte Carlo simulation using SAFIR.
 
 - Pre-process:
 

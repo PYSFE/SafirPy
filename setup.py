@@ -7,7 +7,7 @@ setuptools.setup(
 
     version='0.0.2',
 
-    description='SAFIR wrapper for Monte Carlo simulation',
+    description='A Python wrapper for Safir',
 
     author='Yan Fu',
 
