@@ -40,42 +40,41 @@ setting_parameters:
 
 safir_parameters:
 
-  0.in:
+  # always leave the following line, especially when there is no item under safir_parameters, i.e. obtained from .csv file
+  placeholder: 0
 
-    stec3proba_elastic_modulus: 200000000000.0
+  stec3proba_elastic_modulus: 200000000000.0
 
-    stec3proba_poisson_ratio: 0.3
+  stec3proba_poisson_ratio: 0.3
 
-    # example of distributed parameter
-    stec3proba_k_y_uncertainty:
-      dist_name: norm
-      ubound: 0.999
-      lbound: -0.999
-      loc: 0
-      scale: 2
+  # example of distributed parameter
+  stec3proba_k_y_uncertainty:
+    dist_name: norm
+    ubound: 0.999
+    lbound: -0.999
+    loc: 0
+    scale: 2
 
-    # example of distributed parameter
-    stec3proba_yield_strength:
-      dist_name: norm  # full list of available distributions see notes at the end
-      ubound: 100000000.0
-      lbound: 600000000.0
-      loc: 350000000.0
-      scale: 1000000000000.0
-      kwargs: {}
+  # example of distributed parameter
+  stec3proba_yield_strength:
+    dist_name: norm  # full list of available distributions see notes at the end
+    ubound: 100000000.0
+    lbound: 600000000.0
+    loc: 350000000.0
+    scale: 1000000000000.0
+    kwargs: {}
 
-    silcon_etc_poisson_ratio: 0.2
+  silcon_etc_poisson_ratio: 0.2
 
-    silcon_etc_compressive_strength: 50000000.0
+  silcon_etc_compressive_strength: 50000000.0
 
-    time_time_step: 10
+  time_time_step: 10
 
-    timeprint_time_step: 10
+  timeprint_time_step: 10
 
-  0.tem:
+  loc_x: -0.001477222
 
-    loc_x: -0.001477222
-
-    loc_y: 0.0
+  loc_y: 0.0
 
 # Available distributions (non exhaustive):
 # expon	        An exponential continuous random variable.
