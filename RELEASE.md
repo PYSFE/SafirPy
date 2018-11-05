@@ -15,6 +15,17 @@
 
 ### VERSIONS
 
+**04/11/2018 VERSION: 0.0.3**
+
+- New features:
+    - Predefined Monte Carlo can be used when 'safirpy_mc_param.csv' file is available in path_work_root_dir folder. An example is provided in 'misc'.
+
+- Feature improvements:
+    - Added error handling at multiple locations, i.e. human-friendly error messages will be displayed when something goes wrong.
+
+- Bug fixes:
+    - ETA is disabled and replaced with time consumed as it did not work properly.
+
 **22/10/2018 VERSION: 0.0.2**
 
 - New features:

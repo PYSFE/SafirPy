@@ -5,6 +5,7 @@ from tkinter import filedialog, Tk, StringVar
 
 
 def run(path_yaml_app_param=None):
+
     # ==========
     # DEFINITION
     # ==========
@@ -14,11 +15,10 @@ def run(path_yaml_app_param=None):
         root = Tk()
         root.withdraw()
         text_io = filedialog.askopenfile()
-        path_yaml_app_param = text_io.name
-        if path_yaml_app_param == '':
+        if text_io is None:
             return -1
-        else:
-            dict_app_param = yaml.load(text_io.read(), Loader=yaml.Loader)
+        path_yaml_app_param = text_io.name
+        dict_app_param = yaml.load(text_io.read(), Loader=yaml.Loader)
 
     else:
         with open(path_yaml_app_param, 'r') as f:
@@ -41,8 +41,29 @@ def run(path_yaml_app_param=None):
             dict_setting_param['dict_str_safir_files'][key] = f.read()
 
     # check and change to absolute path
-    if not os.path.isabs(dict_setting_param['path_safir_exe']):
-        dict_setting_param['path_safir_exe'] = os.path.join(path_work_dir, dict_setting_param['path_safir_exe'])
+    check_list = ['path_safir_exe', 'path_work_root_dir', 'path_safir_files']
+    for i in check_list:
+        j = dict_setting_param[i]
+        if isinstance(j, dict):
+            for k, v in j.items():
+                if not os.path.isabs(v):
+                    j[k] = os.path.join(path_work_dir, v)
+        elif isinstance(j, str):
+            if not os.path.isabs(j):
+                j = os.path.join(path_work_dir, j)
+        dict_setting_param[i] = j
+
+    # check if folder and files exist
+    if not os.path.isfile(dict_setting_param['path_safir_exe']):
+        print('ERROR! Files does not exist, check input file: {}'.format(dict_setting_param['path_safir_exe']))
+        return -1
+    if not os.path.isdir(dict_setting_param['path_work_root_dir']):
+        print('ERROR! Directory does not exist, check input file: {}'.format(dict_setting_param['path_safir_exe']))
+        return -1
+    for k, v in dict_setting_param['path_safir_files'].items():
+        if not os.path.isfile(v):
+            print('ERROR! Files does not exist, check input file: {}'.format(v))
+            return -1
 
     # ==========
     # GAME START
