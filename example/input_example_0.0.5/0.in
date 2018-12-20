@@ -1,0 +1,92 @@
+InputFile created with GiD-SAFIR_2016 Interface
+Safir_Static_2D_Analysis
+Mesh_from_GID-Mesher
+
+NNODE       21
+NDIM        2
+NDOFMAX     3
+NCORES      1
+DYNAMIC     APPR_NR
+NLOAD       1
+OBLIQUE     0
+COMEBACK    1.0e-2
+NORENUM
+NMAT        2
+ELEMENTS
+    BEAM    10, 1
+    NG      2
+    NFIBER  1685
+END_ELEM
+NODES
+    NODE     1 0.000000E+6 0.000000E+6 0.00000000E+000
+    NODE     2 -1.848593E-4 4.000004E-1 0.00000000E+000
+    NODE     3 -3.132478E-4 8.000007E-1 0.00000000E+000
+    NODE     4 -3.342225E-4 1.200001E+0 0.00000000E+000
+    NODE     5 -2.073548E-4 1.600001E+0 0.00000000E+000
+    NODE     6 9.331209E-5 2.000001E+0 0.00000000E+000
+    NODE     7 5.767222E-4 2.400001E+0 0.00000000E+000
+    NODE     8 1.233931E-3 2.800000E+0 0.00000000E+000
+    NODE     9 2.038983E-3 3.200000E+0 0.00000000E+000
+    NODE     10 2.951449E-3 3.599999E+0 0.00000000E+000
+    NODE     11 3.920385E-3 3.999998E+0 0.00000000E+000
+    NODE     12 -9.602518E-5 2.000002E-1 0.00000000E+000
+    NODE     13 -2.594882E-4 6.000005E-1 0.00000000E+000
+    NODE     14 -3.399875E-4 1.000001E+0 0.00000000E+000
+    NODE     15 -2.912679E-4 1.400001E+0 0.00000000E+000
+    NODE     16 -7.972275E-5 1.800001E+0 0.00000000E+000
+    NODE     17 3.123157E-4 2.200001E+0 0.00000000E+000
+    NODE     18 8.848476E-4 2.600000E+0 0.00000000E+000
+    NODE     19 1.620205E-3 3.000000E+0 0.00000000E+000
+    NODE     20 2.484781E-3 3.399999E+0 0.00000000E+000
+    NODE     21 3.432321E-3 3.799998E+0 0.00000000E+000
+FIXATIONS
+    BLOCK    1   F0   F0   NO
+    BLOCK   11   F0   NO   NO
+END_FIX
+NODOFBEAM
+    0.tem
+TRANSLATE    1    1
+TRANSLATE    2    2
+END_TRANS
+ELEM   1    1    12    2    1
+ELEM   2    2    13    3    1
+ELEM   3    3    14    4    1
+ELEM   4    4    15    5    1
+ELEM   5    5    16    6    1
+ELEM   6    6    17    7    1
+ELEM   7    7    18    8    1
+ELEM   8    8    19    9    1
+ELEM   9    9    20    10    1
+ELEM   10    10    21    11    1
+PRECISION 1.0e-3
+LOADS
+    FUNCTION FLOAD
+    NODELOAD     11 0 {load_y} 0
+END_LOAD
+MASS
+    M_BEAM    1    1.00e+02
+    M_BEAM    2    1.00e+02
+    M_BEAM    3    1.00e+02
+    M_BEAM    4    1.00e+02
+    M_BEAM    5    1.00e+02
+    M_BEAM    6    1.00e+02
+    M_BEAM    7    1.00e+02
+    M_BEAM    8    1.00e+02
+    M_BEAM    9    1.00e+02
+    M_BEAM    10    1.00e+02
+END_MASS
+MATERIALS
+    STEC3PROBA
+        {stec3proba_elastic_modulus}, {stec3proba_poisson_ratio}, {stec3proba_yield_strength}, 1200., 0., {stec3proba_k_y_uncertainty}
+    SILCON_ETC
+        {silcon_etc_poisson_ratio}, {silcon_etc_compressive_strength}, 1.00e+06
+TIME
+    {time_time_step}, {time_time_end}, 30.
+ENDTIME
+EPSTH
+IMPRESSION
+TIMEPRINT
+    {timeprint_time_step}, {timeprint_time_end}
+END_TIMEPR
+PRINTREACT
+PRINTMN

@@ -60,7 +60,9 @@ def _preprocess_distribute_files():
 
 
 def _preprocess_safir_mc_parameters():
+
     n_rv = 10000
+
     dict_distribution_params = {
         'test_safir_variable': {
             'dist_name': 'norm',
@@ -72,8 +74,11 @@ def _preprocess_safir_mc_parameters():
             'n_rv': None
         }
     }
+
     dist = preprocess_safir_mc_parameters(n_rv, dict_distribution_params)
+
     print(dist)
+
     # import matplotlib.pyplot as plt
     # plt.hist(dist['test_safir_variable'], bins=100, normed=True, cumulative=True)
     # plt.show()

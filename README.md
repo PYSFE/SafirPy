@@ -6,19 +6,8 @@ SafirPy is a Python wrapper to the finite element solver Safir, aimed to provide
 
 ### Prerequisites
 
-[Safir 2016](https://www.uee.uliege.be/cms/c_2383458/en/safir);
+[Safir 2016](https://www.uee.uliege.be/cms/c_2383458/en/safir) and [Python 3.6](https://www.anaconda.com/download/) or later.
 
-[Python 3.6](https://www.anaconda.com/download/) or later; and
-
-The following Python libraries:
-
-```sh
-matplotlib==2.2.2
-numpy==1.15.0
-pandas==0.23.3
-scipy==1.1.0
-seaborn==0.9.0
-```
 
 ### Installation
 

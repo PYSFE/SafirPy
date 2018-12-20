@@ -5,9 +5,9 @@ import setuptools
 setuptools.setup(
     name='SafirPy',
 
-    version='0.0.3',
+    version='0.0.6',
 
-    description='A Python wrapper for Safir',
+    description='A Safir wrapper for Monte Carlo simulations',
 
     author='Yan Fu',
 

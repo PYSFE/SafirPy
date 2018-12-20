@@ -1,0 +1,57 @@
+
+# ========
+# Settings
+# ========
+
+setting_parameters:
+
+  # number of threads. 1 will not call multiprocessing.
+  n_proc: 2
+
+  # number of Monte Carlo simulations
+  n_simulations: 14
+
+  # IMPORTANT make sure you have this folder available and make its path length short (to avoid SAFIR path limit error)
+  path_work_root_dir: C:\safirpy_test
+
+  # safir.exe path. Can be relative path (i.e. safir.exe in this folder) or full path
+  path_safir_exe: SAFIR2016c0_proba.exe
+
+  # SAFIR template files to be used for the simulation. Can be relative or full path.
+  path_safir_files:
+    0.tem: 0.tem
+    0.in: 0.in
+
+  # target convergence, seeking process will terminate when time convergence is within the target range (inclusive).
+  seek_time_convergence_target: 1800
+  seek_time_convergence_target_tol: null  # null or any positive numbers
+
+  # initial load bound for seeking target convergence
+  seek_load_lbound: 1000000.0  # lower bound
+  seek_load_ubound: 25000000.0  # upper bound
+  seek_load_sign: -1  # sign of the initial load bounds
+
+  seek_delta_load_target: 10000.0
+
+# ======================
+# Safir files parameters
+# ======================
+# Feel free to change any static parameter to distributed parameter.
+
+safir_parameters:
+
+  # if path_safir_mc_param_csv is not 'null' then MC params will be parsed from the provided .csv file.
+  path_safir_mc_param_csv: safirpy_mc_params.csv
+
+
+# Available distributions (non exhaustive):
+# expon	        An exponential continuous random variable.
+# exponweib	    An exponentiated Weibull continuous random variable.
+# gumbel_r	    A right-skewed Gumbel continuous random variable.
+# gumbel_l	    A left-skewed Gumbel continuous random variable.
+# lognorm	    A lognormal continuous random variable.
+# norm	        A normal continuous random variable.
+# uniform	    A uniform continuous random variable.
+# weibull_min	Weibull minimum continuous random variable.
+# weibull_max	Weibull maximum continuous random variable.
+# FULL LIST     See 'Continuous distributions' section in https://docs.scipy.org/doc/scipy/reference/stats.html

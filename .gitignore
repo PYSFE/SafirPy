@@ -35,3 +35,8 @@
 gui.py
 view.qml
 *.qmlc
+/research
+/safirexe
+safirpy/gui_fun.py
+safirpy/gui2.py
+safirpy/ui_test.py

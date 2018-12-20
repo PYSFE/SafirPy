@@ -12,8 +12,6 @@ import multiprocessing
 from scipy import stats
 from ruamel import yaml
 
-# from safirpy.safir_problem_definition import file_0 as spd_version_0
-
 
 def preprocess_structured_directories(path_work_dir, list_dir_structure):
     """
@@ -34,7 +32,16 @@ def preprocess_structured_directories(path_work_dir, list_dir_structure):
     # =================================================================
 
     list_dir_structure = reversed(list_dir_structure)
-    list_dir_structure_2 = [['{:0{len}d}'.format(j, len=int(i / 10 + 1)) for j in list(range(i))] for i in list_dir_structure]
+    # list_dir_structure_2 = [['{:0{len}d}'.format(j, len=int(i / 10 + 1)) for j in list(range(i))] for i in list_dir_structure]
+
+    list_dir_structure_2 = []
+
+    for i in list_dir_structure:
+        l_ = []
+        for j in list(range(i)):
+            l_.append('{:0{len}d}'.format(j, len=len(str(int(i)))))
+        list_dir_structure_2.append(l_)
+
 
     for i in list_dir_structure:
 
@@ -278,6 +285,34 @@ def preprocess_safir_mc_parameters(n_rv, dict_distribution_params):
     return dict_sampled_random_values
 
 
+def preprocess_mc_parameters_host(path_safir_mc_param_csv=None, dict_safir_params=None, n_rv=None):
+    # check whether to make MC parameters or obtain from .csv file provided
+    # todo
+
+    # check if random variable parameters are provided in a *.csv file
+    if path_safir_mc_param_csv is not None:
+
+        path_safir_mc_param_csv = os.path.realpath(path_safir_mc_param_csv)
+
+        # check if the *.csv file exists and read data
+        if os.path.isfile(path_safir_mc_param_csv):
+            df_safir_mc_param = pandas.read_csv(path_safir_mc_param_csv).set_index('index')
+
+        else:
+            raise ValueError('ERROR! Files does not exist, check input file: {}'.format(path_safir_mc_param_csv))
+
+    else:
+        df_safir_mc_param = preprocess_mc_parameters(n_rv=n_rv, dict_safir_file_param=dict_safir_params)
+
+    # perform LHS to all columns
+    for c in df_safir_mc_param:
+        val = df_safir_mc_param[c].values
+        numpy.random.shuffle(val)
+        df_safir_mc_param[c] = val
+
+    return df_safir_mc_param
+
+
 def safir_mc_mp(
         list_kwargs,
         calc_worker,
@@ -384,6 +419,35 @@ def safir_seek_convergence_worker(arg):
     q.put('0')
     return result
 
+def safir_seek_convergence_single(load_y, dict_safir_params, dict_safir_in_files_strings, path_work_directory, path_safir_exe):
+
+        path_target_problem_definition = None
+
+        # work out new load and convert to string, getting ready to write into the *.in file
+        dict_safir_params['load_y'] = load_y
+
+        dict_safir_params_ = dict()
+        for k, v in dict_safir_params.items():
+            if isinstance(v, str):
+                dict_safir_params_[k] = '{}'.format(v)
+            else:
+                dict_safir_params_[k] = '{:.3e}'.format(v)
+
+        # write *.in and *.tem files, as defined in dict_safir_in_files_strings
+        for key, text in dict_safir_in_files_strings.items():
+            path_target_problem_definition = os.path.join(path_work_directory, key)
+
+            str_file_text = text.format(**dict_safir_params_)
+
+            with open(os.path.join(path_work_directory, key), 'w+') as f:
+                f.write(str_file_text)
+
+        safir_process(path_target_problem_definition, path_safir_exe, timeout_subprocess=3600)
+
+        time_convergence = safir_check_convergence_time(path_target_problem_definition)
+
+        return time_convergence
+
 
 def safir_seek_convergence(
         path_work_directory,
@@ -405,9 +469,6 @@ def safir_seek_convergence(
 
     # Initial condition
 
-    seek_status_converge_on_time = False
-    seek_status_converge_on_delta_load = False
-    seek_status_max_iteration_exceeded = False
     n_iteration = 0
 
     time_convergence = numpy.nan
@@ -434,9 +495,19 @@ def safir_seek_convergence(
     list_load = [numpy.nan, numpy.nan, numpy.nan]
     list_time = []
 
-    # ===============
+    # assign static data
+    dict_safir_params['time_time_end'] = seek_time_convergence_target + dict_safir_params['time_time_step'] * 5
+    dict_safir_params['timeprint_time_end'] = dict_safir_params['time_time_end']
+
+    # ==================================================================================================================
     # Seeking process
-    # ===============
+    # ==================================================================================================================
+
+    # Check if within bounds todo
+
+    # ------------------------------------------------------------------------------------------------------------------
+    # Solve load convergence
+    # ------------------------------------------------------------------------------------------------------------------
 
     while True:
 
@@ -457,8 +528,6 @@ def safir_seek_convergence(
         # work out new load and convert to string, getting ready to write into the *.in file
         list_load.append((seek_load_ubound + seek_load_lbound) / 2 * seek_load_sign)
         dict_safir_params['load_y'] = (seek_load_ubound + seek_load_lbound) / 2 * seek_load_sign
-        dict_safir_params['time_time_end'] = seek_time_convergence_target + dict_safir_params['time_time_step'] * 5
-        dict_safir_params['timeprint_time_end'] = dict_safir_params['time_time_end']
 
         dict_safir_params_ = dict()
         for k, v in dict_safir_params.items():
@@ -476,30 +545,6 @@ def safir_seek_convergence(
 
             with open(os.path.join(path_work_directory, key), 'w+') as f:
                 f.write(str_file_text)
-
-            # with open(os.path.join(path_work_directory, key), 'w+') as f:
-            #     f.write(str_file_text)
-            #
-            # if key.endswith('.in'):
-            #     dict_safir_params['load_y'] = (seek_load_ubound + seek_load_lbound) / 2 * seek_load_sign
-            #
-            #     list_load.append((seek_load_ubound + seek_load_lbound) / 2 * seek_load_sign)
-            #
-            #     dict_safir_params['time_time_end'] = seek_time_convergence_target + dict_safir_params['time_time_step'] * 5
-            #     dict_safir_params['timeprint_time_end'] = dict_safir_params['time_time_end']
-            #
-            #     # get target input file path
-            #     path_target_problem_definition = os.path.join(path_work_directory, key)
-            #
-            # # print(dict_safir_params)
-            #
-            # str_file_text = safir_problem_definition_protobuf(text, dict_safir_params)
-            #
-            # with open(os.path.join(path_work_directory, key), 'w+') as f:
-            #     f.write(str_file_text)
-
-        # if seek_time_convergence_target_tol is None:
-        #     time_convergence = numpy.nan
 
         # Check seek progress/status
         t_conv_l, t_conv_u = seek_time_convergence_target_range
@@ -583,7 +628,14 @@ def safir_check_convergence_time(path_work_directory):
     except IndexError:
         time_convergence = -1
 
-    return time_convergence
+    rep3, rep4 = re.compile('time[\s.=0-9]+sec\.\s*A displacement is too big.'), re.compile('\d+\.\d*')
+
+    try:
+        time_big_displacement = float(rep4.findall(rep3.findall(test_str)[-1])[0])
+    except IndexError:
+        time_big_displacement = -1
+
+    return max([time_convergence, time_big_displacement])
 
 
 def safir_mc_host(
@@ -593,7 +645,7 @@ def safir_mc_host(
         path_work_root_dir,
         list_dir_structure,
         dict_str_safir_files,
-        dict_safir_params,
+        df_safir_mc_param,
         seek_time_convergence_target,
         seek_time_convergence_target_tol,
         seek_load_lbound,
@@ -613,39 +665,41 @@ def safir_mc_host(
     # Prepare Monte Carlo parameters
     # ==============================
 
-    # dict_pd_safir_mc_param = dict()
-    # for key, val in dict_safir_params.items():
-    #     dict_pd_safir_mc_param[key] = preprocess_mc_parameters(n_rv=n_rv, dict_safir_file_param=val)
+    path_csv_file = os.path.join(path_work_root_dir, 'safirpy_mc_params.csv')
 
-    df_safir_mc_param = preprocess_mc_parameters(n_rv=n_rv, dict_safir_file_param=dict_safir_params)
+    try:
+        df_safir_mc_param.to_csv(path_csv_file)
+    except PermissionError:
+        print('ERROR! Directory is not writable, check inputs: {}'.format(path_csv_file))
+        return -1
 
-    # df_safir_mc_param.to_csv(os.path.join(path_work_root_dir, 'safir_mc_params.csv'))
     pd_path_destination_directories = pandas.DataFrame(
         {'path_destination_directories': path_destination_directories,
-         'index': list(range(len(path_destination_directories)))}).set_index('index')
-    # pd_path_destination_directories.set_index('index', inplace=True)
+         'index': list(range(len(path_destination_directories)))}
+    ).set_index('index')
+
     df_safir_mc_param = pandas.concat([df_safir_mc_param, pd_path_destination_directories], axis=1)
 
-    path_csv_file = os.path.join(path_work_root_dir, 'safirpy_mc_params.csv')
-    if os.path.isfile(path_csv_file):
-        cmd = input('Would you like to use the existing parameters in {}? y/n:'.format(path_csv_file))
-        if cmd == 'no' or cmd.lower() == 'n':
-            try:
-                df_safir_mc_param.to_csv(path_csv_file)
-            except PermissionError:
-                print('ERROR! Directory is not writable, check inputs: {}'.format(path_csv_file))
-                return -1
-        elif cmd == 'yes' or cmd.lower() == 'y':
-            df_safir_mc_param = pandas.read_csv(path_csv_file).set_index('index')
-        else:
-            print('ERROR! Unknown command.')
-            return -1
-    else:
-        try:
-            df_safir_mc_param.to_csv(path_csv_file)
-        except PermissionError:
-            print('ERROR! Directory is not writable, check inputs: {}'.format(path_csv_file))
-            return -1
+    # path_csv_file = os.path.join(path_work_root_dir, 'safirpy_mc_params.csv')
+    # if os.path.isfile(path_csv_file):
+    #     cmd = input('Would you like to use the existing parameters in {}? y/n:'.format(path_csv_file))
+    #     if cmd == 'no' or cmd.lower() == 'n':
+    #         try:
+    #             df_safir_mc_param.to_csv(path_csv_file)
+    #         except PermissionError:
+    #             print('ERROR! Directory is not writable, check inputs: {}'.format(path_csv_file))
+    #             return -1
+    #     elif cmd == 'yes' or cmd.lower() == 'y':
+    #         df_safir_mc_param = pandas.read_csv(path_csv_file).set_index('index')
+    #     else:
+    #         print('ERROR! Unknown command.')
+    #         return -1
+    # else:
+    #     try:
+    #         df_safir_mc_param.to_csv(path_csv_file)
+    #     except PermissionError:
+    #         print('ERROR! Directory is not writable, check inputs: {}'.format(path_csv_file))
+    #         return -1
 
 
     # a = [df_safir_mc_param.loc[i].to_dict()]
@@ -765,5 +819,22 @@ def aux_generate_input_yaml(yaml_app_param):
         yaml.dump(dict_app_param, f, Dumper=yaml.RoundTripDumper)
 
 
+test_str = '''dsfasdfsd
+time =   1574.64844 sec.
+ A displacement is too big.'''
+
 if __name__ == '__main__':
-    pass
+    # rep1, rep2 = re.compile('CONVERGENCE HAS BEEN OBTAINED[\s.=]*TIME[\s.=0-9]*'), re.compile('\d+\.\d*')
+
+    # rep3, rep4 = re.compile('time[\s.=0-9]+sec\.\s*A displacement is too big.'), re.compile('\d+\.\d*')
+    #
+    # try:
+    #     time_convergence = float(rep4.findall(rep3.findall(test_str)[-1])[0])
+    # except IndexError:
+    #     time_convergence = -1
+    #
+    # print(time_convergence)
+
+    path_work_dir = os.path.dirname('root')
+    list_dir_structure = (1, 500)
+    print(preprocess_structured_directories(path_work_dir, list_dir_structure))
